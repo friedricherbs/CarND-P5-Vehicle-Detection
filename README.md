@@ -12,8 +12,8 @@ The goals / steps of this project are the following:
 * Estimate a bounding box for vehicles detected.
 
 [//]: # (Image References)
-[image1]: ./examples/car_not_car.png
-[image2]: ./examples/HOG_example.jpg
+[image1]: ./output_images/car_examples.png
+[image2]: ./output_images/HOG_example.png
 [image3]: ./examples/sliding_windows.jpg
 [image4]: ./examples/sliding_window.jpg
 [image5]: ./examples/bboxes_and_heat.png
@@ -31,18 +31,14 @@ I started by reading in all the `vehicles` and `non-vehicles` images in [train.p
 
 I then explored different color spaces and different `skimage.hog()` parameters (`orientations`, `pixels_per_cell`, and `cells_per_block`).  I grabbed random images from each of the two classes and displayed them to get a feel for what the `skimage.hog()` output looks like.
 
-Here is an example using the `YCrCb` color space and HOG parameters of `orientations=8`, `pixels_per_cell=(8, 8)` and `cells_per_block=(2, 2)`:
+Here is an example using the Y-channel of `YCrCb` color space and HOG parameters of `orientations=9`, `pixels_per_cell=(8, 8)` and `cells_per_block=(2, 2)`:
 
 
 ![alt text][image2]
 
-####2. Explain how you settled on your final choice of HOG parameters.
+I tried different colorspaces and HoG parameters. The final configuration was chosen according to the one which gave the best test accuracy from the classifier. Using all three HOG channels increases runtime and feature vector length significantly, however it has the biggest impact on the testing accuracy. The final parameter set includes 9 orientations (larger values did not improve the accuracy of the classifier much), 8 pixels_per_cell, (2, 2) cells_per_block and (2, 2) and `transform_sqrt` set to false (threw an error due to negative values). 
 
-I tried various combinations of parameters and...
-
-####3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
-
-I trained a linear SVM using...
+For classification I trained a linear SVM using the `scikit-learn fit()` function, see  [train.py](https://github.com/friedricherbs/CarND-P5-Vehicle-Detection/blob/master/train.py) in line 181. Using a non-linear SVM yielded clearly inferior test accuracies probably due to overfitting and took much longer so I did not follow this path.
 
 ###Sliding Window Search
 
