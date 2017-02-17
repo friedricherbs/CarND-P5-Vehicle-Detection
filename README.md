@@ -14,8 +14,8 @@ The goals / steps of this project are the following:
 [//]: # (Image References)
 [image1]: ./output_images/car_examples.png
 [image2]: ./output_images/HOG_example.png
-[image3]: ./examples/sliding_windows.jpg
-[image4]: ./examples/sliding_window.jpg
+[image3]: ./output_images/sliding_windows.png
+[image4]: ./output_images/example_detections.png
 [image5]: ./examples/bboxes_and_heat.png
 [image6]: ./examples/labels_map.png
 [image7]: ./examples/output_bboxes.png
@@ -44,13 +44,20 @@ For classification I trained a linear SVM using the `scikit-learn fit()` functio
 
 ####1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
 
-I decided to search random window positions at random scales all over the image and came up with this (ok just kidding I didn't actually ;):
+A sliding window search is implemented in [p5.py](https://github.com/friedricherbs/CarND-P5-Vehicle-Detection/blob/master/p5.py) in the functions `find_cars_multi_scale()`starting in line 58 and `find_cars()` starting in line 80. Different scales were searched depending on the `yImg` coordinate: vehicles farther away appear smaller, closer vehicles appear wider. The different scales are summarized here:
+
+| yImg          | Scale         | 
+|:-------------:|:-------------:| 
+| 400, 528      | 1             | 
+| 400, 656      | 1.5           |
+| 528, 656      | 2.0           |
+
+The scale factor adapts the whole image size instead of rescaling the standard detection window size of 64x64 pixels. The step size was 2 cells times the scaling factor. An example image of the search images is shown here:
+
 
 ![alt text][image3]
 
-####2. Show some examples of test images to demonstrate how your pipeline is working.  What did you do to optimize the performance of your classifier?
-
-Ultimately I searched on two scales using YCrCb 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided a nice result.  Here are some example images:
+Ultimately I searched on three scales using YCrCb 3-channel HOG features plus spatially binned color and histograms of color in the feature vector, which provided quite good results.  Here are some example images:
 
 ![alt text][image4]
 ---
