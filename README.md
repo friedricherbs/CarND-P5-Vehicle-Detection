@@ -17,7 +17,7 @@ The goals / steps of this project are the following:
 [image3]: ./output_images/sliding_windows.png
 [image4]: ./output_images/example_detections.png
 [image5]: ./output_images/heatmaps.png
-[image6]: ./examples/labels_map.png
+[image6]: ./output_images/label_heatmap.png
 [image7]: ./examples/output_bboxes.png
 [video1]: ./project_video.mp4
 
