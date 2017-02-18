@@ -16,7 +16,7 @@ The goals / steps of this project are the following:
 [image2]: ./output_images/HOG_example.png
 [image3]: ./output_images/sliding_windows.png
 [image4]: ./output_images/example_detections.png
-[image5]: ./examples/bboxes_and_heat.png
+[image5]: ./output_images/heatmaps.png
 [image6]: ./examples/labels_map.png
 [image7]: ./examples/output_bboxes.png
 [video1]: ./project_video.mp4
@@ -42,8 +42,6 @@ For classification I trained a linear SVM using the `scikit-learn fit()` functio
 
 ###Sliding Window Search
 
-####1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
-
 A sliding window search is implemented in [p5.py](https://github.com/friedricherbs/CarND-P5-Vehicle-Detection/blob/master/p5.py) in the functions `find_cars_multi_scale()`starting in line 58 and `find_cars()` starting in line 80. Different scales were searched depending on the `yImg` coordinate: vehicles farther away appear smaller, closer vehicles appear wider. The different scales are summarized here:
 
 | yImg          | Scale         | 
@@ -67,17 +65,17 @@ Ultimately I searched on three scales using YCrCb 3-channel HOG features plus sp
 Here's a [link to my video result](./p5.mp4)
 
 
-####2. Describe how (and identify where in your code) you implemented some kind of filter for false positives and some method for combining overlapping bounding boxes.
+###False positives and overlapping bounding boxes
 
-I recorded the positions of positive detections in each frame of the video.  From the positive detections I created a heatmap and then thresholded that map to identify vehicle positions.  I then used `scipy.ndimage.measurements.label()` to identify individual blobs in the heatmap.  I then assumed each blob corresponded to a vehicle.  I constructed bounding boxes to cover the area of each blob detected.  
+I recorded the positions of positive detections in each frame of the video.  From the positive detections I updated a ringbuffer like heatmap (see [heatmap_buffer.py](./heatmap_buffer.py)) and then thresholded that map to identify vehicle positions, see [p5.py](./p5.py) line 396.  I then used `scipy.ndimage.measurements.label()` to identify individual blobs in the heatmap.  I assumed each blob corresponded to a vehicle.  I constructed bounding boxes to cover the area of each blob detected.  
 
 Here's an example result showing the heatmap from a series of frames of video, the result of `scipy.ndimage.measurements.label()` and the bounding boxes then overlaid on the last frame of video:
 
-### Here are six frames and their corresponding heatmaps:
+Here are six frames and their corresponding heatmaps:
 
 ![alt text][image5]
 
-### Here is the output of `scipy.ndimage.measurements.label()` on the integrated heatmap from all six frames:
+Here is the output of `scipy.ndimage.measurements.label()` on the integrated heatmap from all six frames:
 ![alt text][image6]
 
 ### Here the resulting bounding boxes are drawn onto the last frame in the series:
