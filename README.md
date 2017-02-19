@@ -71,18 +71,22 @@ I recorded the positions of positive detections in each frame of the video.  Fro
 
 Here's an example result showing the heatmap from a series of frames of video, the result of `scipy.ndimage.measurements.label()` and the bounding boxes then overlaid on the last frame of video:
 Here are six frames and their corresponding heatmaps:
+
 ![alt text][image5]
+
 Here is the output of `scipy.ndimage.measurements.label()` on the integrated heatmap from all six frames:
+
 ![alt text][image6]
+
 Here the resulting bounding boxes are drawn onto the last frame in the series:
+
 ![alt text][image7]
 
-
-
----
+The heatmap approach has two drawbacks: first the temporal filtering is bad if the object moves significantly during one heatmap integration period. Second, bounding boxes are rather unstable (wobbling) due to hard thresholding and the point. To circumvent these problems, I decided to use the heatmap just for initialization of new tracks and do the tracking in another module. In line 408 in [p5.py](./p5.py) new tracks are initialized from the integrated heatmap. In line 402 the association between valid tracks and the raw detections (not the integrated heatmap to avoid a filter cascade) is done. The association considers the intersection over union as an association criterion. The extensions of the detections turn out to be rather unstable, so the association is not very strict (see line 429). Finally in line 405 the track parameters are updated. If no measurements are available or associated, the track is predicted based on the estimated (image) velocity (see line 492 and 493).
 
 ###Discussion
 
-####1. Briefly discuss any problems / issues you faced in your implementation of this project.  Where will your pipeline likely fail?  What could you do to make it more robust?
-
-Here I'll talk about the approach I took, what techniques I used, what worked and why, where the pipeline might fail and how I might improve it if I were going to pursue this project further.  
+The results obtained so far are quite promising and motivate to continue on this project. One drawback of the current system is the high amount of false positives. Using the integrated heatmap helped a lot here, but for other scenarios this might be a problem. One way to proceed could be to extend the number of training and testing examples for example based on the Udacity [dataset](https://github.com/udacity/self-driving-car/tree/master/annotations) or the TME Motorway [dataset](http://cmp.felk.cvut.cz/data/motorway/). With more training data a nonlinear SVM or even a neural network might perform better than the simple linear SVM applied here.
+Another possible improvement would be to do the tracking in 3D world coordinates instead of the image 2D image plane. Object movement can be much better described in 3D than in the image.
+Occlusions are also a remaining difficulty for the current tracker, this can be observed also in the [video](./p5.mp4). In principle one could reject the wrong measurements due to occlusions, but this would require more stable detections. Currently the detection dimensions change significantly from frame to frame. 
+Finally runtime should be addressed. The current implementation takes about 1s per image which is far away from realtime, however I think this was not the main goal of this project. 
